@@ -35,7 +35,7 @@ const CreateScreen = () => {
 
     if (success) {
       navigation.goBack(); // if successful go back home
-      //here we can also use RNNAvigation to send data back to the previus screen as an alternative option to the useFocusEffect function
+      //here we can also use Navigation to send data back to the previus screen as an alternative option to the useFocusEffect function
     } else {
       // TODO: validation on why
     }

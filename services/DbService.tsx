@@ -7,6 +7,9 @@ import {
   query,
   orderBy,
   where,
+  doc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -34,7 +37,7 @@ export const createNewBucketItem = async (item: {
 
 // TODO: Get all list items
 export const getMyBucketList = async () => {
-  var allItems: { id: (options?: SnapshotOptions) => DocumentData }[] = []; //array that we want to  return
+  var allItems: { [key: string]: any; id: string }[] = []; //array that we want to return
   //^ inferring all items for type script type safety
 
   //making a custom query to add orderby/limit to the data shown
@@ -46,7 +49,8 @@ export const getMyBucketList = async () => {
     // doc.data() is never undefined for query doc snapshots
     console.log(doc.id, " => ", doc.data());
 
-    allItems.push({ ...doc.data(), id: doc.data });
+    allItems.push({ ...doc.data(), id: doc.id });
+    // allItems.push({ ...doc.data(), id: doc.data });
     //^ pushing each docs data to the array I want to return
   });
 
@@ -55,4 +59,33 @@ export const getMyBucketList = async () => {
   return allItems;
 
   //Can't just use query snapshot as the array of items, need to access the doc data
+};
+
+export const getBucketItemById = async (id: string) => {
+  try {
+    const docRef = doc(db, "items", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { ...docSnap.data(), id: docSnap.id };
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching document: ", error);
+    return null;
+  }
+};
+
+export const markItemAsCompleted = async (id: string) => {
+  try {
+    const docRef = doc(db, "items", id);
+    await updateDoc(docRef, {
+      isCompleted: true,
+    });
+    console.log("Marked as completed.");
+  } catch (e) {
+    console.error("Error updating document: ", e);
+  }
 };

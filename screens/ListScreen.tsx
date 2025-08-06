@@ -60,7 +60,7 @@ const ListScreen = () => {
             <TouchableOpacity
               key={index}
               style={styles.card}
-              onPress={() => navigation.navigate("Details")}
+              onPress={() => navigation.navigate("Details", { id: item.id })}
             >
               <Text>{item.title}</Text>
 
